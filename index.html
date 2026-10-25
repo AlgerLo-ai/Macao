@@ -108,7 +108,7 @@ var info='<section><div class="day-head"><small>出發前先看</small><h2>預�
 var SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTTGxhiL0tRwJftJSjmVRid-ENRwicwHPswbTg9-iBvXt186yM0JdS1ja0zo6LZHO_-ALB4Vu5wjDkt/pub?gid=125746887&single=true&output=csv";
 var all=[];
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
-function fmt(s){return esc(s).replace(/^(推薦原因：|交通：)/,"<strong>$1</strong>")}
+function fmt(s){return esc(s).replace(/\[([^\]]+)\]\((https?:\/\/[^\s)"]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>').replace(/^(推薦原因：|交通：)/,"<strong>$1</strong>")}
 function parseCSV(t){var r=[],row=[],f="",q=false,i,c;for(i=0;i<t.length;i++){c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}else if(c=='"')q=true;else if(c==","){row.push(f);f=""}else if(c=="\n"||c=="\r"){if(c=="\r"&&t[i+1]=="\n")i++;row.push(f);r.push(row);row=[];f=""}else f+=c}if(f!==""||row.length){row.push(f);r.push(row)}return r}
 function fromSheet(t){var rows=parseCSV(t.replace(/^\uFEFF/,"")),h=rows.shift(),m={},days=[],by={};h.forEach(function(k,i){m[k.trim()]=i});
 rows.forEach(function(r){function g(k){return (r[m[k]]||"").trim()}var id=g("day");if(!id||!g("name"))return;
