@@ -64,7 +64,7 @@ footer{text-align:center;color:var(--mute);font-size:.8rem;padding:0 16px 30px}
 <script>
 var D=[
 {id:"d1",tab:"Day 1 抵澳",date:"11/18（三）",title:"抵達澳門・威尼斯水都",sub:"下午才入住，行程輕鬆，全程室內、有電梯。",items:[
-{t:"10:35",e:"✈️",n:"澳門航空 桃園→澳門",why:"<strong>入境後搭倫敦人免費穿梭巴士, img:"https://assets.sandsresortsmacao.cn/content/getting-here/banner/LM-shuttle-bus_750x400.jpg""},
+{t:"10:35",e:"✈️",n:"澳門航空 桃園→澳門",why:"<strong>推薦原因：</strong>約 12:50 抵達，澳門與台灣同時區，不用調時差。",go:"<strong>交通：</strong>入境後到機場外搭計程車，約 MOP 60–80（約 TWD 240–320），三人同車平均最划算；也可詢問倫敦人／威尼斯人免費穿梭巴士乘車處。"},
 {t:"13:30",e:"🏨",n:"倫敦人 寄放行李／入住",why:"<strong>推薦原因：</strong>常規 15:00 入住，先寄行李不耽誤時間；請在訂房備註「長輩，請安排近電梯樓層」。",go:"<strong>交通：</strong>機場直達酒店門口，無須轉乘。"},
 {t:"14:00",e:"🥪",n:"午餐：豬扒包＋葡式蛋撻",eat:1,why:"<strong>推薦原因：</strong>豬扒包是澳門人的日常，脆皮豬排配軟麵包，蛋撻選焦糖面的最道地。威尼斯人「澳門街」集合多家老字號，一站吃完不用走遠。",go:"<strong>交通：</strong>倫敦人經室內連廊步行至威尼斯人，約 10 分鐘、無階梯。預估 MOP 100–130／人。"},
 {t:"15:30",e:"🚣",n:"威尼斯人 貢多拉船",why:"<strong>推薦原因：</strong>全程坐著，約 15–20 分鐘，船夫會唱歌，天花板是藍天白雲，長輩零負擔。",go:"<strong>交通：</strong>館內步行即到。票價約 MOP 168／人（三人約 MOP 500、TWD 2,000）。"},
@@ -88,7 +88,7 @@ var D=[
 var tabs=document.getElementById("tabs"),view=document.getElementById("view");
 function dayHTML(d){
 var h='<section><div class="day-head"><small>'+d.date+'</small><h2>'+d.title+'</h2><p>'+d.sub+'</p></div><ul class="plan">';
-d.items.forEach(function(i){h+='<li class="stop"><div class="ico">'+i.e+'<b>'+i.t+'</b></div><div class="body">'<h3>'+i.n+(i.eat?'<span class="eat">必吃</span>':'')+'</h3>'+(i.img?'<img class="pic" loading="lazy" src="'+i.img+'" alt="'+i.n+'">':'')+'<p>'+i.why+'</p><p>'+i.go+'</p></div></li>';});
+d.items.forEach(function(i){h+='<li class="stop"><div class="ico">'+i.e+'<b>'+i.t+'</b></div><div class="body"><h3>'+i.n+(i.eat?'<span class="eat">必吃</span>':'')+'</h3>'+(i.img?'<img class="pic" loading="lazy" src="'+esc(i.img)+'" alt="'+esc(i.n)+'">':'')+'<p>'+i.why+'</p><p>'+i.go+'</p></div></li>';});
 return h+'</ul></section>';}
 var info='<section><div class="day-head"><small>出發前先看</small><h2>預算與注意事項</h2><p>以三人、不含機票與住宿估算。</p></div>'+
 '<table><tr><th>項目</th><th>約 MOP</th></tr>'+
@@ -105,12 +105,25 @@ var info='<section><div class="day-head"><small>出發前先看</small><h2>預�
 '<li><b>💵 付款與計程車</b><span>用澳門幣（MOP），港幣也可用但找零是 MOP。計程車常不收信用卡，備好現金。</span></li>'+
 '<li><b>🧥 天氣與藥品</b><span>11 月約 18–25°C，帶薄外套；常備藥與保險資料放隨身包。</span></li>'+
 '<li><b>🛂 證件</b><span>出發前確認護照效期與最新入境規定。</span></li></ul></section>';
-var all=D.map(function(d){return{id:d.id,tab:d.tab,html:dayHTML(d)}});
-all.push({id:"info",tab:"預算・提醒",html:info});
-all.forEach(function(x){var b=document.createElement("button");b.textContent=x.tab;b.setAttribute("role","tab");b.dataset.id=x.id;b.onclick=function(){show(x.id);try{history.replaceState(null,"","#"+x.id)}catch(e){}};tabs.appendChild(b);});
-function show(id){var x=all.filter(function(a){return a.id===id})[0]||all[0];view.innerHTML=x.html;
-Array.prototype.forEach.call(tabs.children,function(b){b.setAttribute("aria-selected",b.dataset.id===x.id)});window.scrollTo(0,0);}
-show((location.hash||"").slice(1));
+var SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTTGxhiL0tRwJftJSjmVRid-ENRwicwHPswbTg9-iBvXt186yM0JdS1ja0zo6LZHO_-ALB4Vu5wjDkt/pub?gid=125746887&single=true&output=csv";
+var all=[];
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function fmt(s){return esc(s).replace(/^(推薦原因：|交通：)/,"<strong>$1</strong>")}
+function parseCSV(t){var r=[],row=[],f="",q=false,i,c;for(i=0;i<t.length;i++){c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}else if(c=='"')q=true;else if(c==","){row.push(f);f=""}else if(c=="\n"||c=="\r"){if(c=="\r"&&t[i+1]=="\n")i++;row.push(f);r.push(row);row=[];f=""}else f+=c}if(f!==""||row.length){row.push(f);r.push(row)}return r}
+function fromSheet(t){var rows=parseCSV(t.replace(/^\uFEFF/,"")),h=rows.shift(),m={},days=[],by={};h.forEach(function(k,i){m[k.trim()]=i});
+rows.forEach(function(r){function g(k){return (r[m[k]]||"").trim()}var id=g("day");if(!id||!g("name"))return;
+var d=by[id];if(!d){d=by[id]={id:id,tab:id,date:"",title:"",sub:"",items:[]};days.push(d)}
+["tab","date","title","sub"].forEach(function(k){if(!d[k]||d[k]===id)d[k]=g(k)||d[k]});
+d.items.push({t:g("time"),e:g("emoji")||"📍",n:g("name"),eat:/^(y|1|是|v)$/i.test(g("eat")),img:g("img"),why:fmt(g("why")),go:fmt(g("go"))})});
+return days}
+function build(){all=D.map(function(d){return{id:d.id,tab:d.tab,html:dayHTML(d)}});
+all.push({id:"info",tab:"預算・提醒",html:info});tabs.innerHTML="";
+all.forEach(function(x){var b=document.createElement("button");b.textContent=x.tab;b.setAttribute("role","tab");b.dataset.id=x.id;b.onclick=function(){show(x.id);try{history.replaceState(null,"","#"+x.id)}catch(e){}};tabs.appendChild(b);})}
+var cur=(location.hash||"").slice(1);
+function show(id){cur=id;var x=all.filter(function(a){return a.id===id})[0]||all[0];view.innerHTML=x.html;
+Array.prototype.forEach.call(tabs.children,function(b){b.setAttribute("aria-selected",b.dataset.id===x.id)});window.scrollTo(0,0)}
+build();show(cur);
+if(SHEET_URL){fetch(SHEET_URL+(SHEET_URL.indexOf("?")<0?"?":"&")+"t="+Date.now()).then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(t){var n=fromSheet(t);if(n.length){D=n;build();show(cur)}}).catch(function(){})}
 </script>
 </body>
 </html>
