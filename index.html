@@ -88,7 +88,7 @@ var D=[
 var tabs=document.getElementById("tabs"),view=document.getElementById("view");
 function dayHTML(d){
 var h='<section><div class="day-head"><small>'+d.date+'</small><h2>'+d.title+'</h2><p>'+d.sub+'</p></div><ul class="plan">';
-d.items.forEach(function(i){h+='<li class="stop"><div class="ico">'+i.e+(i.t?'<b>'+i.t+'</b>':'')</div><div class="body"><h3>'+i.n+(i.eat?'<span class="eat">必吃</span>':'')+'</h3>'+(i.why?'<p>'+i.why+'</p>':'')+(i.go?'<p>'+i.go+'</p>':'')+'+(i.img?'<img class="pic" loading="lazy" src="'+esc(i.img)+'" alt="'+esc(i.n)+'">':'')+'</div></li>';});
+d.items.forEach(function(i){h+='<li class="stop"><div class="ico">'+i.e+(i.t?'<b>'+i.t+'</b>':'')+'</div><div class="body"><h3>'+i.n+(i.eat?'<span class="eat">必吃</span>':'')+'</h3>'+(i.why?'<p>'+i.why+'</p>':'')+(i.go?'<p>'+i.go+'</p>':'')+(i.img?'<img class="pic" loading="lazy" src="'+esc(i.img)+'" alt="'+esc(i.n)+'">':'')+'</div></li>';});
 return h+'</ul></section>';}
 var info='<section><div class="day-head"><small>出發前先看</small><h2>預算與注意事項</h2><p>以三人、不含機票與住宿估算。</p></div>'+
 '<table><tr><th>項目</th><th>約 MOP</th></tr>'+
